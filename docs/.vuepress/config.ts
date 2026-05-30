@@ -9,7 +9,7 @@ import { defineUserConfig } from 'vuepress'
 import { plumeTheme } from 'vuepress-theme-plume'
 
 export default defineUserConfig({
-  base: '/',
+  base: '/MaaTutorial/',
   lang: 'zh-CN',
   title: 'Maa 教程',
   description: 'MaaFramework 自动化框架教程',
