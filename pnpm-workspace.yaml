@@ -1,6 +1,10 @@
 packages:
   - '.'
 
+allowBuilds:
+  esbuild: true
+  '@parcel/watcher': true
+
 onlyBuiltDependencies:
   - '@parcel/watcher'
   - esbuild
