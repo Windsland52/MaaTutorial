@@ -1,11 +1,9 @@
 ---
-title: 课程
+title: 课程目录
 dir:
     order: 1
 index: true
 ---
-
-# MaaFW 新手实战课程
 
 本课程面向 MaaFW 开发新手，目标是带你建立 MaaFW 应用、生态和工具链的整体认知，并通过本地调试环境与 PracticeLab 教具完成实战练习。必要时会提供可选的提问参考，帮助你更快理清思路。
 
