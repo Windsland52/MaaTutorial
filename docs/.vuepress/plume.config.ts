@@ -32,6 +32,7 @@ export default defineThemeConfig({
           linkPrefix: '/start/',
           sidebar: [
             'README.md',
+            '00-course-overview.md',
           ],
         },
       ],

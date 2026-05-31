@@ -11,7 +11,7 @@ index: true
 
 ## 学习路线
 
-1. 课程导览
+1. [课程导览](00-course-overview.md)
 2. MaaFW 是什么
 3. MaaFW 应用常规结构
 4. MaaFW 生态地图
