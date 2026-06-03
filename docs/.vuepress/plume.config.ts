@@ -33,6 +33,7 @@ export default defineThemeConfig({
           sidebar: [
             'README.md',
             '00-course-overview.md',
+            '01-what-is-maafw.md',
           ],
         },
       ],
