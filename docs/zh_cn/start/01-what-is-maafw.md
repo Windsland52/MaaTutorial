@@ -49,7 +49,7 @@ MaaFW 的判断依据主要来自截图。
 
 ## Pipeline 是 MaaFW 应用的核心逻辑
 
-大多数 MaaFW 应用的核心逻辑写在 Pipeline（流水线）里。
+MaaFW 应用的大部分核心逻辑写在 Pipeline（流水线）里。
 
 Pipeline 是一组 JSON 节点（Node）。每个节点最核心的是三件事：
 
@@ -62,29 +62,17 @@ Pipeline 是一组 JSON 节点（Node）。每个节点最核心的是三件事�
 ```json
 {
     "ClickStart": {
-        "desc": "点击“开始”文本",
-        "recognition": {
-            "type": "OCR",
-            "param": {
-                "expected": "开始"
-            }
-        },
-        "action": {
-            "type": "Click"
-        },
+        // "点击“开始”文本",
+        "recognition": "OCR",
+        "expected": "开始",
+        "action": "Click",
         "next": ["Confirm"]
     },
     "Confirm": {
-        "desc": "点击“确认”文本",
-        "recognition": {
-            "type": "OCR",
-            "param": {
-                "expected": "确认"
-            }
-        },
-        "action": {
-            "type": "Click"
-        }
+        // "点击“确认”文本",
+        "recognition": "OCR",
+        "expected": "确认",
+        "action": "Click"
     }
 }
 ```
@@ -102,8 +90,8 @@ Pipeline 是一组 JSON 节点（Node）。每个节点最核心的是三件事�
 
 一个完整的应用通常会包含：
 
-- `interface.json`：告诉通用 GUI 有哪些控制器、资源、任务和选项
-- `resource/`：存放 Bundle（包含 Pipeline、图片素材、模型）
+- `interface.json`：告诉通用 GUI 你的项目有哪些功能以及如何运行
+- `resource/`：存放项目资源
 - Custom：通过自定义代码实现更复杂的识别或动作
 
 所以本课程会从 Pipeline 入手，再延伸到 ProjectInterface 和 Custom。
