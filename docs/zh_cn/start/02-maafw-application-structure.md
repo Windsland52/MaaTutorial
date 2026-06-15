@@ -27,8 +27,6 @@ my-project/
 │   └── tutorial.json                         # 任务配置：用户能选什么任务、选项
 ├── tools/                                    # 检查、格式化、发布脚本
 ├── interface.json                            # 项目接口：通用 GUI 读它来加载项目
-├── maa-project.json                          # 项目意图（脚手架管理）
-├── maa-project.lock.json                     # 脚手架解析状态（脚手架管理）
 ├── package.json                              # dev-tools 依赖和脚本
 ├── README.md                                 # 项目说明文档
 └── LICENSE
@@ -64,20 +62,39 @@ my-project/
 {
     "interface_version": 2,
     "name": "my-project",
-    "controller": [{ "name": "adb", "type": "Adb" }],
-    "resource": [{ "name": "default", "path": ["./resource/base"] }],
-    "import": ["./tasks/tutorial.json"]
+    "controller": [
+        {
+            "name": "adb",
+            "type": "Adb"
+        }
+    ],
+    "resource": [
+        {
+            "name": "default",
+            "path": [
+                "./resource/base"
+            ]
+        }
+    ],
+    "import": [
+        "./tasks/tutorial.json"
+    ]
 }
 ```
 
 任务少可以直接写在 `interface.json` 里的 `task` 字段  
-任务多，就拆到外部文件、用 `import` 引入，保持 `interface.json` 的简洁。这里用的是拆分写法。
+任务多，就拆到外部文件、用 `import` 导入，保持 `interface.json` 的简洁。这里用的是拆分写法。
 
 `import` 进来的 `tasks/tutorial.json` 大致长这样：
 
 ```jsonc
 {
-    "task": [{ "name": "Tutorial", "entry": "Tutorial.Start" }]
+    "task": [
+        {
+            "name": "Tutorial",
+            "entry": "Tutorial.Start"
+        }
+    ]
 }
 ```
 

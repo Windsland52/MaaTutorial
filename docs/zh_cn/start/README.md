@@ -11,7 +11,7 @@ index: true
 
 1. [课程导览](00-course-overview.md)
 2. [MaaFW 是什么](01-what-is-maafw.md)
-3. MaaFW 应用常规结构
+3. [MaaFW 应用常规结构](02-maafw-application-structure.md)
 4. MaaFW 生态地图
 5. 推荐学习工作流
 6. 本地环境与工具链

@@ -34,6 +34,7 @@ export default defineThemeConfig({
             'README.md',
             '00-course-overview.md',
             '01-what-is-maafw.md',
+            '02-maafw-application-structure.md',
           ],
         },
       ],
