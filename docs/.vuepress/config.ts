@@ -28,7 +28,7 @@ export default defineUserConfig({
   shouldPrefetch: false,
 
   theme: plumeTheme({
-    hostname: '',
+    hostname: 'https://windsland52.github.io',
 
     /* 文档仓库配置，用于 editLink */
     docsRepo: 'Windsland52/MaaTutorial',
@@ -47,6 +47,14 @@ export default defineUserConfig({
       permalink: false,
       createTime: false,
       title: false,
+    },
+
+    plugins: {
+      /* 生成 llms.txt / llms-full.txt，便于 AI 读取全站内容 */
+      llmstxt: {
+        /* 内容都在 /zh_cn/ 下，默认只处理根语言会一页都抓不到 */
+        locale: 'all',
+      },
     },
   }),
 })

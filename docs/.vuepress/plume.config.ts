@@ -20,8 +20,11 @@ export default defineThemeConfig({
 
   locales: {
     '/zh_cn/': {
+      /* 本 locale 没有自己的首页，站名链接指向站点根首页 */
+      home: '/',
+
       navbar: [
-        { text: '首页', link: '/zh_cn/' },
+        { text: '首页', link: '/' },
         { text: '课程', link: '/zh_cn/start/' },
       ],
       collections: [
@@ -30,12 +33,8 @@ export default defineThemeConfig({
           title: '课程',
           dir: 'start',
           linkPrefix: '/start/',
-          sidebar: [
-            'README.md',
-            '00-course-overview.md',
-            '01-what-is-maafw.md',
-            '02-maafw-application-structure.md',
-          ],
+          /* 按文件名排序自动生成，新增章节无需在此登记 */
+          sidebar: 'auto',
         },
       ],
     },

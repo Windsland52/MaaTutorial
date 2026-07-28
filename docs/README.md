@@ -6,23 +6,23 @@ config:
     hero:
       name: Maa Tutorial
       text: MaaFramework 教程
-      tagline: 面向新手的 MaaFW 实战入门课程
+      tagline: 从基础概念到项目实践的 MaaFW 新手教程
       actions:
         - theme: brand
           text: 开始学习
           link: /zh_cn/start/
   - type: features
     features:
-      - title: 实战入门
+      - title: 认识 MaaFW
         icon: twemoji:books
-        details: 从 MaaFW 概念、生态与工具链开始，逐步完成本地实战练习。
+        details: 了解 MaaFW 的基本概念和应用结构，并准备好本地开发环境与工具链。
         link: /zh_cn/start/
-      - title: Pipeline 主线
+      - title: 动手实践
         icon: twemoji:gear
-        details: 学会设计节点、组织流程，并用调试工具定位 Pipeline 问题。
+        details: 从第一个可运行任务开始，学习设计 Pipeline，并使用调试工具验证和调整任务流程。
         link: /zh_cn/start/
-      - title: 交付准备
-        icon: twemoji:light-bulb
-        details: 学会补齐 interface、接入通用 GUI、处理 custom 扩展和打包，做一个用户可直接运行的项目。
+      - title: AI 辅助
+        icon: twemoji:robot
+        details: 提供 MaaFW Skills，让 AI 助手辅助你学习 MaaFW、编写项目。
         link: /zh_cn/start/
 ---
