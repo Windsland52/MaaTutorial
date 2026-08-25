@@ -9,11 +9,11 @@ order: 2
 
 ## 项目结构一览
 
-用脚手架创建的新项目，大致长这样：
+刚创建的 Pipeline 项目，大致长这样：
 
 ```txt
 my-project/
-├── .github/workflows/                        # GitHub Actions 工作流
+├── .github/                                  # GitHub 配置
 ├── .vscode/                                  # VSCode 配置
 ├── resource/
 │   └── base/                                 # 默认资源包（Bundle），写自动化逻辑的主要地方
@@ -22,21 +22,21 @@ my-project/
 │       │   └── ocr/                          # OCR 模型文件
 │       ├── pipeline/
 │       │   └── tutorial.json                 # Pipeline 节点定义文件（自动化流程的核心逻辑）
-│       └── default_pipeline.json             # 通用默认配置
+│       └── default_pipeline.json             # 所有节点共享的默认参数
 ├── tasks/
 │   └── tutorial.json                         # 任务配置：用户能选什么任务、选项
-├── tools/                                    # 检查、格式化、发布脚本
+├── tools/                                    # 检查、格式化、构建发布脚本
 ├── interface.json                            # 项目接口：通用 GUI 读它来加载项目
-├── package.json                              # dev-tools 依赖和脚本
+├── package.json                              # 开发工具的依赖和脚本
 ├── README.md                                 # 项目说明文档
 └── LICENSE
 ```
 
-如果创建的是 Agent 项目（需要 Custom），在 pipeline 项目基础上多出这些：
+如果创建的是 Agent 项目（需要 Custom），还会多出这些 Python 部分：
 
 ```txt
 my-project/
-├── ...                                      # 其余文件、文件夹同 pipeline 项目
+├── ...                                      # 其余文件、文件夹同 Pipeline 项目
 ├── agent/
 │   ├── custom/
 │   │   ├── action/                          # 自定义动作
@@ -64,13 +64,14 @@ my-project/
     "name": "my-project",
     "controller": [
         {
-            "name": "adb",
+            "name": "Android",
+            "label": "Android / Emulator",
             "type": "Adb"
         }
     ],
     "resource": [
         {
-            "name": "default",
+            "name": "base",
             "path": [
                 "./resource/base"
             ]
@@ -82,8 +83,7 @@ my-project/
 }
 ```
 
-任务少可以直接写在 `interface.json` 里的 `task` 字段  
-任务多，就拆到外部文件、用 `import` 导入，保持 `interface.json` 的简洁。这里用的是拆分写法。
+实际生成的 `interface.json` 还有 `version`、`description` 等描述性字段，上面为突出核心结构做了精简。任务少时可以直接写进它的 `task` 字段；任务多时，拆到外部文件再用 `import` 导入，保持 `interface.json` 简洁。这里用的是拆分写法。
 
 `import` 进来的 `tasks/tutorial.json` 大致长这样：
 
@@ -98,6 +98,21 @@ my-project/
 }
 ```
 
+而 `task.entry` 指向的 `Tutorial.Start`，则定义在 `resource/base/pipeline/tutorial.json` 里：
+
+```jsonc
+{
+    "Tutorial.Start": {
+        "recognition": "OCR",
+        "roi": [0, 0, 1280, 720],
+        "expected": ".*",
+        "action": "DoNothing"
+    }
+}
+```
+
+这是脚手架自带的占位节点：OCR 匹配画面上的任意文字，然后什么也不做，保证任务从创建起就能跑通。后面的章节会把它替换成真正的自动化逻辑。
+
 两个新手常踩的坑：
 
 - `resource[].path` 指向资源包**目录**，不是某个 Pipeline 文件。
@@ -107,6 +122,6 @@ my-project/
 
 运行前，通用 GUI 连接目标设备、加载资源。
 
-运行时就是第一章说的"截图→识别→动作→下一节点"循环——具体每步做什么，全在 `resource/base/` 的 Pipeline 里。
+运行时就是第一章说的“截图→识别→动作→下一节点”循环——具体每步做什么，全在 `resource/base/` 的 Pipeline 里。
 
 下一章会介绍本地开发环境和常用工具，为动手编写第一个任务做好准备。
