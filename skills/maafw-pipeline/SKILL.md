@@ -89,6 +89,7 @@ description: 编写、修改与审查 MaaFramework（MaaFW）Pipeline——从�
 
 - 识别按状态清单的选型落字段；`roi` 收紧到目标实际出现区域（提速且防误命中），起点可取识别 box 外扩约 20px——过紧易失配、过松易误中，不稳时扫描几档。
 - 动作按意图选型，完整名单与精确参数路由 3.1-任务流水线协议核对：点击 `Click` / `LongPress`，滑动 `Swipe` / `MultiSwipe` / `Scroll`，按键 `ClickKey` / `LongPressKey` / `KeyDown` / `KeyUp`，输入 `InputText`，应用启停 `StartApp` / `StopApp`，流程 `StopTask` / `DoNothing`，系统能力 `Command` / `Shell` / `Screencap`，扩展 `Custom`。点击落点遵守坐标卫生（硬护栏 2）。
+- 要向用户展示节点消息（运行日志 / 轻提示 / 系统通知 / 弹窗）配节点 `focus`：按消息类型给模板（`{name}` 等占位替换、支持 `$` i18n），`display` 选展示渠道；`trace` 上报遥测需项目 interface.json 配置了 `telemetry` 才生效——字段定义路由 3.1，模板与渠道机制路由 3.3 协议「节点通知处理」节。
 - 参数起点：匹配类 `threshold`（TemplateMatch / FeatureMatch；OCR / ColorMatch 语义不同不套用）以实测为准——起点取目标位实测得分减约 0.1（换场景会掉），核对仍高于该屏误配最高分；两侧贴得太近是模板 / roi 问题，调阈值救不了；能用 `*_wait_freezes` 等待稳定的就不加 delay；拿不准的参数少写、用默认值（硬护栏 3）。
 - 写入纪律：增量插入而非整文件改写——JSONC 注释承载"为什么这么写"，整写会毁掉它；缩进与字段顺序跟项目既有约定（常有格式化插件）；坐标一律用框架缩放后坐标系的实测值。
 
