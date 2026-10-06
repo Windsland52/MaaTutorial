@@ -16,7 +16,7 @@ my-project/
 ├── .github/                                  # GitHub 配置
 ├── .vscode/                                  # VSCode 配置
 ├── resource/
-│   └── base/                                 # 默认资源包（Bundle），写自动化逻辑的主要地方
+│   └── base/                                 # 默认资源目录（Bundle），写自动化逻辑的主要地方
 │       ├── image/                            # 模板/特征匹配用的图片素材
 │       ├── model/
 │       │   └── ocr/                          # OCR 模型文件
@@ -115,7 +115,7 @@ my-project/
 
 两个新手常踩的坑：
 
-- `resource[].path` 指向资源包**目录**，不是某个 Pipeline 文件。
+- `resource[].path` 指向 **Bundle 根目录**（如 `resource/base/`），不是某个 Pipeline 文件。
 - `task.entry` 指向 Pipeline **节点名**，不是 Pipeline 文件名。
 
 ## 一个任务实际怎么跑起来
