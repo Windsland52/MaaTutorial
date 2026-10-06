@@ -58,7 +58,7 @@
     - **跨平台分发建议 ASCII**；
     - **收口**：除上述外不再设其他字符级规则，复用边界等语义由文件归属表达（见 project-structure.md）。
 - **接口与内部分离**：模块对外只经显式接口节点暴露能力，`__` 内部节点不直接被其他任务引用；共享入口的归置方式见 project-structure.md。
-- **重命名前全库搜引用**：next / on_error、`[Anchor]`、option 的 pipeline_override、custom 的 run_task / override_next——改名后引用静默失联是高频事故。
+- **重命名前全库搜引用**：next / on_error、`[Anchor]`、option 的 pipeline_override、custom 的 run_task / override_next——漏改后果分档：next / on_error **加载期即失败**（能抓住），roi / target 与 custom 引用**运行期失败**，`[Anchor]` 与 pipeline_override **静默失效**，皆高频事故。
 
 ### 语义结构（词位公式）
 
@@ -129,4 +129,4 @@
 
 - `expected` 按当前语言直接书写；多语言 OCR 文案不手工维护——有 i18n 工具链的项目（如 `tools/i18n`）会自动生成各语言预期文本。
 - `expected` 首选**完整文本**，截断/正则是兜底不是默认——仅当引擎对完整文本识别不稳（百分号、特殊符号、易混字符）才用片段，并在注释保留完整原文（`@i18n-skip` 注记）。
-- 易混字、繁简差、全半角差写进 OCR 替换规则（`model/ocr/` 替换表），不靠放宽 `expected` 兜底。
+- 易混字、繁简差、全半角差写进 OCR 节点的 `replace` 替换对（识别文本先替换再与 `expected` 匹配），不靠放宽 `expected` 兜底；全项目通用的替换收进 `default_pipeline.json` 的 OCR 类型默认参数。

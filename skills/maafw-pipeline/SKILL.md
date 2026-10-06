@@ -21,7 +21,7 @@ description: 编写、修改与审查 MaaFramework（MaaFW）Pipeline——从�
 3. **第一个命中的候选立即胜出**（后续候选不再检测），**进入该节点**、执行其动作——动作成功则轮询它的 next 列表（回到第 2 步）；动作失败走它的 on_error。
 4. 轮询超过**当前节点**的 `timeout`（缺省 20s）仍无命中 → 走**当前节点**的 on_error——想调整某节点**被识别**的等待时长或超时去向，改的是**它上一节点**的 `timeout` / `on_error`，不是它自己的。
 5. **异常状态**：
-    - **进入（三种）**：动作失败；轮询超时；被轮询列表中没有任何存在且启用的节点（不等 `timeout`、立即未命中——多为引用了不存在/被禁用的节点）。
+    - **进入（三种）**：动作失败；轮询超时；被轮询列表中没有任何存在且启用的节点（不等 `timeout`、立即未命中——不存在的引用过不了加载校验，走到这一步的多为 `enabled:false` 节点或未设置的锚点）。
     - **进入后**：on_error 列表接替 next 列表被同样轮询——on_error 为空时 next 立即为空、循环直接终止，任务以失败收场。
     - **解除**：只由识别命中解除；命中后若动作失败，立即重新进入——因此结果上走出异常 = 命中且动作成功。
     - **异常期间收紧**：再次未命中（on_error 轮询超时，或 on_error 列表没有任何存在且启用的节点——如恢复节点名拼错，不等超时、立即失败）**不进 on_error**、任务直接失败；执行链走空时若仍处于异常状态，已登记的 `[JumpBack]` 回跳不生效，任务以失败终止。
@@ -90,7 +90,7 @@ description: 编写、修改与审查 MaaFramework（MaaFW）Pipeline——从�
 - 识别按状态清单的选型落字段；`roi` 收紧到目标实际出现区域（提速且防误命中），起点可取识别 box 外扩约 20px——过紧易失配、过松易误中，不稳时扫描几档。
 - 动作按意图选型，完整名单与精确参数路由 3.1-任务流水线协议核对：点击 `Click` / `LongPress`，滑动 `Swipe` / `MultiSwipe` / `Scroll`，按键 `ClickKey` / `LongPressKey` / `KeyDown` / `KeyUp`，输入 `InputText`，应用启停 `StartApp` / `StopApp`，流程 `StopTask` / `DoNothing`，系统能力 `Command` / `Shell` / `Screencap`，扩展 `Custom`。点击落点遵守坐标卫生（硬护栏 2）。
 - 要向用户展示节点消息（运行日志 / 轻提示 / 系统通知 / 弹窗）配节点 `focus`：按消息类型给模板（`{name}` 等占位替换、支持 `$` i18n），`display` 选展示渠道；`trace` 上报遥测需项目 interface.json 配置了 `telemetry` 才生效——字段定义路由 3.1，模板与渠道机制路由 3.3 协议「节点通知处理」节。
-- 参数起点：匹配类 `threshold`（TemplateMatch / FeatureMatch；OCR / ColorMatch 语义不同不套用）以实测为准——起点取目标位实测得分减约 0.1（换场景会掉），核对仍高于该屏误配最高分；两侧贴得太近是模板 / roi 问题，调阈值救不了；能用 `*_wait_freezes` 等待稳定的就不加 delay；拿不准的参数少写、用默认值（硬护栏 3）。
+- 参数起点：`threshold` 以实测为准（得分裕量规则仅 TemplateMatch 套用；OCR / ColorMatch 语义不同；FeatureMatch 无 threshold，严格度由 `count` 最少特征点数与 `ratio` KNN 距离比控制）——起点取目标位实测得分减约 0.1（换场景会掉），核对仍高于该屏误配最高分；两侧贴得太近是模板 / roi 问题，调阈值救不了；能用 `*_wait_freezes` 等待稳定的就不加 delay；拿不准的参数少写、用默认值（硬护栏 3）。
 - 写入纪律：增量插入而非整文件改写——JSONC 注释承载"为什么这么写"，整写会毁掉它；缩进与字段顺序跟项目既有约定（常有格式化插件）；坐标一律用框架缩放后坐标系的实测值。
 
 ### 5. 流程组合
@@ -139,11 +139,11 @@ description: 编写、修改与审查 MaaFramework（MaaFW）Pipeline——从�
     - **结构性改动**（新增功能、重构、动复用面）才摸复用面——先看地图（目录树 + interface.json 任务清单）→ 节点名索引用脚本提取（逐文件列 root key，勿逐文件通读）→ 按能力关键词检索、命中文件才读全文（词位命名的语义名即检索索引，共享件先查 `general.json`）；
     - **素材**：按 `image/` 目录结构按需检索；
     - **无论规模**：先明确改动边界（哪些节点动、哪些只引用）。
-2. **搜引用**：改节点名或素材路径前全库搜索引用点——漏改不报错，静默失联。引用点清单：
+2. **搜引用**：改节点名或素材路径前全库搜索引用点——漏改的后果按引用位置分档，并非都是静默：next / on_error 漏改**加载期即失败**（非锚点引用的存在性校验，能抓住；经 override 注入的悬空引用同样被拦）；roi / target 引用、custom 的 run_task、template 素材路径漏改**运行期失败**（目标解析空即动作失败 / 任务不存在 / 模板懒加载缺图）；`[Anchor]` 条目（校验跳过锚点名）与 option 的 pipeline_override（override 落空）才是**静默失联**。引用点清单：
     - **节点引用**：next / on_error 的三种写法（裸字符串、`[JumpBack]X` 前缀、`{name:"X"}` 对象）、roi / target 的 string 引用、`[Anchor]`、option 的 pipeline_override、custom 的 run_task / override_next；
     - **素材路径**：pipeline 的 template 与 custom 代码内的读图调用（自定义识别 / 动作可自行加载 `image/` 下的图）；
     - **同前缀克隆**：改识别 / 动作参数前另搜 `Retry` / `Fallback` 后缀——克隆与源静默漂移，同样不报错；
-    - **跨语言引用**：custom / agent 代码内写节点名（语言不限——C++ / Python / Node.js / Go 等）可用 `[Anchor]` 作稳定引用缓解——但锚点必须在所有前置路径设置过，否则被静默跳过。
+    - **跨语言引用**：custom / agent 代码内写节点名（语言不限——C++ / Python / Node.js / Go 等）按入口分两类——`run_task` / `run_recognition` / `run_action` 的 entry 按**原始字符串**查节点，传 `"[Anchor]X"` 只会去找字面叫这个名字的节点并失败，锚点跳转先 `get_anchor` 取实名再传入；`override_next` 的 next 列表与 pipeline 引用位同解析，`[JumpBack]` / `[Anchor]` 属性语法可用。锚点本身可经 context API 读写（`set_anchor` / `get_anchor`，C API / agent RPC / 各绑定均暴露）；写实名 + 改名前全库搜引用仍是基线防线。
 3. **修改**：按需对齐新建轨 2–5 的同等标准写新内容。
 4. **自查**：可达性检查 + 反模式清单逐项核对（[references/anti-patterns.md](references/anti-patterns.md)——坐标卫生、timeout/-1 滥用、循环限次、版本兼容）。
 
