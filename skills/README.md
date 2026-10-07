@@ -31,7 +31,8 @@ npx skills add https://github.com/Windsland52/MaaLLMWiki --skill maallmwiki --gl
 
 ## 负空间（无 Skill 匹配时的出口）
 
-- **素材制作**（截模板图、OCR 词表）：硬要求是**像素空间一致 + 裁后自匹配复核**（判定标准见 `maafw-pipeline` 素材准备节）；agent 自主工作流可用实时观测底座（如 [maafw-live](https://github.com/Windsland52/maafw-live)，作者维护）或自写脚本走框架截图链路，人工在场截取用官方工具链（maa-support 插件 / MFA 工具箱 / MPE 等）。方法见 [MaaTutorial 教程](../docs/zh_cn/start/README.md)。
+- **素材制作**（截模板图、OCR 词表）：硬要求是**像素空间一致 + 裁后自匹配复核**（判定标准见 `maafw-pipeline` 素材准备节）；agent 自主工作流可用实时观测底座（如 [maafw-live](https://github.com/Windsland52/maafw-live)）或自写脚本走框架截图链路，人工在场截取用官方工具链（maa-support 插件 / MFA 工具箱 / MPE 等）。用该底座时，**观测/实测/裁剪/留存的动作与判据读它自带的 skill**（随包发布，本集合不复制）：
+  `npx skills add https://github.com/Windsland52/maafw-live --skill maafw-live --global`。方法见 [MaaTutorial 教程](../docs/zh_cn/start/README.md)。
 - **设备连接配置**：`maafw-debug` 排障树配置层承载；未覆盖处经 MaaLLMWiki 路由 2.4-控制方式说明原文、结合教程排查。
 - **项目脚手架 / 事后诊断 / 自研集成**：转向下方能力边界所列渠道；事实问题一律回落 MaaLLMWiki 与 MaaTutorial 教程。
 
@@ -39,6 +40,7 @@ npx skills add https://github.com/Windsland52/MaaLLMWiki --skill maallmwiki --gl
 
 * **项目初始化与脚手架**：由 [`create-maa-project`](https://github.com/Windsland52/create-maa-project)（作者维护）负责，不在本集合中重复制造脚手架。
 * **事后运行日志与证据诊断**：由证据套件 [`MaaEvidenceKit`](https://github.com/Windsland52/MaaEvidenceKit)（`maa-evidence` Skill）负责，本集合严格专注于**开发态、编写态与调试态**。
+* **设备交互与实时观测**：由运行工具 [`maafw-live`](https://github.com/Windsland52/maafw-live)负责，其**自带 `maafw-live` skill 随包发布**，承载观测/识别实测/模板资产/关键帧留存的动线、判据与反模式；本集合的 `maafw-debug` 只保留"诊断时怎么选工具、怎么判结果"的部分，命令与动线不在此重复。
 
 ## 安装与使用
 
