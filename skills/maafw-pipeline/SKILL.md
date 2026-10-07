@@ -139,7 +139,7 @@ description: 编写、修改与审查 MaaFramework（MaaFW）Pipeline——从�
     - **结构性改动**（新增功能、重构、动复用面）才摸复用面——先看地图（目录树 + interface.json 任务清单）→ 节点名索引用脚本提取（逐文件列 root key，勿逐文件通读）→ 按能力关键词检索、命中文件才读全文（词位命名的语义名即检索索引，共享件先查 `general.json`）；
     - **素材**：按 `image/` 目录结构按需检索；
     - **无论规模**：先明确改动边界（哪些节点动、哪些只引用）。
-2. **搜引用**：改节点名或素材路径前全库搜索引用点——漏改的后果按引用位置分档，并非都是静默：next / on_error 漏改**加载期即失败**（非锚点引用的存在性校验，能抓住；经 override 注入的悬空引用同样被拦）；roi / target 引用、custom 的 run_task、template 素材路径漏改**运行期失败**（目标解析空即动作失败 / 任务不存在 / 模板懒加载缺图）；`[Anchor]` 条目（校验跳过锚点名）与 option 的 pipeline_override（override 落空）才是**静默失联**。引用点清单：
+2. **搜引用**：改节点名或素材路径前全库搜索引用点——漏改的后果按引用位置分档，并非都是静默：next / on_error 漏改**加载期即失败**（非锚点引用的存在性校验，能抓住；interface 的 pipeline_override 注入的悬空引用同样被拦）；roi / target 引用、custom 的 run_task、template 素材路径漏改**运行期失败**（目标解析空即动作失败 / 任务不存在 / 模板懒加载缺图）；`[Anchor]` 条目（校验跳过锚点名）与 option 的 pipeline_override（override 落空）才是**静默失联**。引用点清单：
     - **节点引用**：next / on_error 的三种写法（裸字符串、`[JumpBack]X` 前缀、`{name:"X"}` 对象）、roi / target 的 string 引用、`[Anchor]`、option 的 pipeline_override、custom 的 run_task / override_next；
     - **素材路径**：pipeline 的 template 与 custom 代码内的读图调用（自定义识别 / 动作可自行加载 `image/` 下的图）；
     - **同前缀克隆**：改识别 / 动作参数前另搜 `Retry` / `Fallback` 后缀——克隆与源静默漂移，同样不报错；
