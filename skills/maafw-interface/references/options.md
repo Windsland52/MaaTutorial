@@ -1,6 +1,6 @@
 # Option 接线规则
 
-来源：MaaLLMWiki 路由的 `3.3-ProjectInterfaceV2协议`（版本锁定原文）。配套 [SKILL.md](../SKILL.md) 工作流第 4 步。本页只承载**选型判据与静默坑**；控件字段清单、默认值语义路由 schema，合并细则路由协议原文。
+来源：MaaLLMWiki 路由的 `3.3-ProjectInterfaceV2协议`（版本锁定原文）。配套 [SKILL.md](../SKILL.md) 工作流第 4 步。本页承载**选型判据、覆盖顺序、最小接线示例与静默坑**；控件字段清单、默认值语义路由 schema，合并细则路由协议原文。
 
 ## 控件选型（一个用户参数放哪种控件）
 
@@ -40,6 +40,53 @@ option 自己可声明 `controller[]` / `resource[]` 适用列表（按 **name**
 3. 每个分支写 `pipeline_override`：与 pipeline 文件同构，按**节点名 + 字段**定向，**字段级覆盖**——写出的字段替换（数组直接换、不拼接），没写的字段**继承节点原值**；识别/动作换**类型**时不继承旧参数、按新类型默认值重建（引擎实现行为，协议只举了数组不拼接的例）；节点语义见 `maafw-pipeline`。
 4. 在 task（或更高级）引用 option 键名，逐字符一致。
 5. **逐分支验证 override 落点**：目标节点临时加可观察字段（改 action 或挂打日志的 Custom），确认覆盖真的生效——override 按节点名定向，节点改名 = 静默失联，改名前全库搜 option 引用。
+
+## 最小接线示例（select + input）
+
+```jsonc
+{
+    "task": [
+        {
+            "name": "Combat",
+            "entry": "Combat_Start",
+            "option": ["StageSelect", "RunCount"]
+        }
+    ],
+    "option": {
+        "StageSelect": {
+            // 键名即 option 的 name（定义里不写 name——写了 schema 直接拒）；label 可选
+            // 缺省 type 为 select（switch 的 case 名仅限 Yes/No）；case 内可挂子 option[]
+            // 同识别/动作 type 下只写差异字段；若换 type 则不继承旧 param、按新类型默认值重建
+            "default_case": "Stage1",
+            "cases": [
+                {
+                    "name": "Stage1",
+                    "pipeline_override": {
+                        "Combat_SelectStage": {
+                            "recognition": { "type": "OCR", "param": { "expected": "1-7" } }
+                        }
+                    }
+                }
+            ]
+        },
+        "RunCount": {
+            "type": "input",
+            "inputs": [
+                {
+                    "name": "count",
+                    "default": "5",
+                    "pipeline_type": "int",
+                    "verify": "^[1-9]\\d*$"
+                }
+            ],
+            "pipeline_override": {
+                // 字符串占位符 "{count}" 按 pipeline_type 转型为整数后覆写节点字段
+                "Combat_Loop": { "max_hit": "{count}" }
+            }
+        }
+    }
+}
+```
 
 ## preset（v2.3.0+）
 
