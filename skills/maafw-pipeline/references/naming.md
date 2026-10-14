@@ -1,6 +1,6 @@
 # 命名规范
 
-来源：协议硬规则（3.1-任务流水线协议 / 1.1-快速开始，经 MaaLLMWiki 路由的版本锁定原文）+ 社区实证约定。项目结构与目录组织见 [project-structure.md](project-structure.md)。
+来源：协议硬规则（`3.1-任务流水线协议` / `1.1-快速开始`，经 MaaLLMWiki 路由的版本锁定原文）+ 社区实证约定。项目结构与目录组织见 [project-structure.md](project-structure.md)。
 
 ## pipeline 文件名
 
@@ -9,7 +9,7 @@
 - `pipeline/` 目录下所有 json/jsonc **递归读取**，文件名不参与任务解析——节点名才是全局键。
 - 以 `.` 开头的文件/文件夹不读取；`$` 开头的 JSON root 字段不解析。
 - `default_pipeline.json` 是保留名：置于资源包根（与 `pipeline/` 同级），为所有节点及特定算法/动作类型提供默认参数。细则：
-    - **键名大小写敏感**（`TemplateMatch`、`OCR`、`Click`）；类型对象内 v1 / v2 写法均可；
+    - **键名大小写敏感**（`TemplateMatch`、`OCR`、`Click`）；类型对象内 `Pipeline v1` / `Pipeline v2` 写法均可；
     - **优先级**：节点自身字段（写在节点定义里，不在本文件） > 算法 / 动作类型默认 > `Default` > 框架内置；
     - **只认三类键**：`Default`、识别类型名、动作类型名——写节点名等其它键会被静默忽略（不报错、不生效）；
     - **文件名**：`default_pipeline.json` 或 `default_pipeline.jsonc`；
@@ -31,6 +31,7 @@
 约定层（两种实证风格，项目内统一）：
 
 - **模块前缀 + PascalCase（新建默认）**（`AutoCollect/AutoCollectRoute1.json`——一功能域一目录，文件名带模块前缀保证排序与检索；活动期号件也走独立模块目录，随期整体归档）——与节点、模板图同用 PascalCase，目录 / 文件 / 节点首槽三层同词（`Awards/` ↔ `Awards*.json` ↔ `Awards_*`），跨工件一个搜索串通吃。
+- **共享文件**：跨任务共享节点文件固定为顶层小写的 `general.json`。
 - **功能平铺**（`Awards.json`、`SwitchAccount.json`——布局与大小写正交，平铺不等于蛇形，项目自定）——功能数适中时更轻；活动文件收进 `activity/` 子目录，模块膨胀后新模块开目录、已发布文件不迁移。
 - 不把全部节点堆进一个文件，也不依赖文件名表达结构（结构由 next 链表达）。
 
@@ -58,7 +59,20 @@
     - **跨平台分发建议 ASCII**；
     - **收口**：除上述外不再设其他字符级规则，复用边界等语义由文件归属表达（见 project-structure.md）。
 - **接口与内部分离**：模块对外只经显式接口节点暴露能力，`__` 内部节点不直接被其他任务引用；共享入口的归置方式见 project-structure.md。
-- **重命名前全库搜引用**：next / on_error、`[Anchor]`、option 的 pipeline_override、custom 的 run_task / override_next——漏改后果分档：next / on_error **加载期即失败**（能抓住），roi / target 与 custom 引用**运行期失败**，`[Anchor]` 与 pipeline_override **静默失效**，皆高频事故。
+
+### 重命名前全库搜引用（引用点与漏改后果分档）
+
+改节点名或素材路径前必须全库检索以下全部引用面，漏改后果按引用位置分四档（与 SKILL.md 修改轨对齐）：
+
+| 后果分档 | 引用位置 | 具体写法与注意事项 |
+| --- | --- | --- |
+| **1. 加载期报错** | `next` / `on_error` 节点引用 | 裸字符串、`[JumpBack]X`、`{name:"X"}`（含 `interface.json` 的 `pipeline_override` 注入项）——非锚点悬空引用被加载期存在性校验直接拒绝 |
+| **2. 运行期失败** | `roi` / `target` 字符串引用 | 指向前置节点名或 `[Anchor]锚点名`——目标解析为空即识别或动作失败 |
+| **2. 运行期失败** | `task.entry` 与 Custom `run_*` | `interface.json` 的 `task.entry`；Custom 代码的 `run_task` / `run_recognition` / `run_action`（按**原始字符串**查节点，传 `"[Anchor]X"` 只会找字面名并失败，锚点跳转须先经 `get_anchor` 取实名再传入；锚点可经 `set_anchor` / `get_anchor` 读写） |
+| **2. 运行期失败** | `template` 图片素材路径 | pipeline 的 `template` 字段——模板懒加载，缺图在运行到该节点时识别失败 |
+| **3. 调用即失败（不回滚）** | Custom `override_next` | 与 pipeline 引用位同解析（支持 `[JumpBack]` / `[Anchor]` 属性语法）——悬空引用返回 `false`（返回值必判），但坏补丁已生效且不回滚；若列表内无其他有效候选则不等 `timeout` 立即转 `on_error` |
+| **4. 静默失联或漂移** | `[Anchor]` 与 `option` 覆盖 | `next` / `on_error` 中的 `[Anchor]X`（校验跳过锚点名，未设置被静默跳过）；`option` 的 `pipeline_override` 目标节点名（落空不报错） |
+| **4. 静默失联或漂移** | 同前缀克隆与 Custom 读图 | 同前缀的 `Retry` / `Fallback` 克隆节点（改源节点参数漏同步即静默漂移）；Custom 自行加载 `image/` 下的图若未自查空图则静默空转 |
 
 ### 语义结构（词位公式）
 
@@ -78,7 +92,9 @@
 
 **槽位细则**：
 
-- **角色词族**（开放，新词按语义归族，无需扩规则）：边界与编排——`Main`（主流程入口）、`Sub` / `Task`（子流程体 / 子任务入口）、`Loop` / `Dispatch`（循环体 / 分发器）、`Gate` / `Guard`（条件门 / 守卫）、`Node`（占位锚）、`Template`（参数覆写底版）、`Override` / `Disable`、`Pre` / `Post`（动作前后半步）、`NoNext`（去 next 克隆）、`Interrupt`（中断处理）；结果分支——`Success` / `Fail` / `Error` / `Done` / `Finish` / `Skip` / `Stop` / `Pass` / `Max`（买满上限）/ `NoMore` / `Met` / `Insufficient` / `Reached` / `Exhausted`…
+- **角色词族**（开放，新词按语义归族，无需扩规则）：
+    - **边界与编排**：`Main`（主流程入口）、`Sub` / `Task`（子流程体 / 子任务入口）、`Loop` / `Dispatch`（循环体 / 分发器）、`Gate` / `Guard`（条件门 / 守卫）、`Node`（占位锚）、`Template`（参数覆写底版）、`Override` / `Disable`、`Pre` / `Post`（动作前后半步）、`NoNext`（去 next 克隆）、`Interrupt`（中断处理）；
+    - **结果分支**：`Success` / `Fail` / `Error` / `Done` / `Finish` / `Skip` / `Stop` / `Pass` / `Max`（买满上限）/ `NoMore` / `Met` / `Insufficient` / `Reached` / `Exhausted`。
 - **角色 vs 对象判定线**：尾缀说"节点在流程里的职责 / 分支结果"→ 角色；说"画面上可观察的状态 / 结算屏"→ 对象。一词两读（`Failed`、`Max`、`Complete`）按实际职责裁决——next 里的 outcome 处理器是角色，识别某画面的节点是对象。
 - **对象槽合法前缀**：否定 `No` / `Not` / `Cannot` / `Exclude`，或然 `Maybe`（不确定是否发生）；成对分支用同前缀配对（`SoldOut` / `NotSoldOut`），保证单侧 grep 找得到另一侧。
 - **对象槽可承载复合动词短语**：单一节点的复合意图允许 And / Or 连接（`ScanAndScroll`、`TrackOrGoTo`）——是否拆成多节点是结构决策，不是命名违规。
@@ -122,7 +138,7 @@
 - 跨平台项目建议 ASCII 文件名，避免大小写敏感文件系统上的引用错配；资源目录下文件夹禁 `_` 开头（Android 打包限制，见 project-structure.md）。
 - **截取工具**。细则：
     - **agent 工作流**：优先观测底座（如 maafw-live）的 `crop`（从留存的原始分辨率帧裁，识别空间一致，裁后自匹配复核），或自写脚本走框架截图链路后程序化裁剪；
-    - **人工截取**：官方工具（VSCode maa-support 插件、MFA 工具箱、MPE 等）；
+    - **人工截取**：官方工具（VSCode Maa Pipeline Support（`maa-support` / MSE）、MFA 工具箱、MPE 等）；
     - **外部图片 / 游戏内截屏按像素空间一致判定**：模拟器自带截图在分辨率与控制器基准一致、无遮挡污染（通知栏 / 水印 / 有损压缩）时可直用；相机翻拍与比例不符的不可用；一律过裁后自匹配复核。
 
 ## OCR expected 与多语言
