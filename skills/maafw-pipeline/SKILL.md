@@ -101,11 +101,7 @@ description: 编写、修改与审查 MaaFramework（MaaFW）Pipeline——从�
 ## 修改轨（存量项目入口）
 
 1. **摸底**（按改动规模伸缩，走索引不通读）：小修直接定位目标节点与上下游；结构性改动先看目录树与 `interface.json` 任务清单 → 脚本提取节点名索引（列 root key）→ 按词位关键词检索，共享件先查 `general.json`；动手前明确改动边界。
-2. **搜引用**：改节点名或素材路径前全库搜索，漏改后果按引用位置分四档（完整核对表与跨语言 `get_anchor` 细则见 [references/naming.md](references/naming.md)）：
-    - **加载期报错**：`next` / `on_error` 非锚点悬空引用（含 `interface.json` 覆盖注入项）；
-    - **运行期失败**：`roi` / `target` 引用、`task.entry`、custom 的 `run_task` / `run_recognition` / `run_action`、`template` 素材路径；
-    - **调用即失败（不回滚）**：custom 的 `override_next` 悬空引用（返回 `false` 但坏补丁已生效）；
-    - **静默失联或漂移**：`[Anchor]`、option 的 `pipeline_override`、同前缀 `Retry` / `Fallback` 克隆节点参数漂移、custom 读图未查空。
+2. **搜引用**：改节点名或素材路径前全库搜索——漏改后果按引用位置分四档（**加载期报错 / 运行期失败 / 调用即失败且不回滚 / 静默失联或漂移**），各档覆盖的引用面与跨语言 `get_anchor` 细则见 [references/naming.md](references/naming.md) 的引用核对表。
 3. **修改**：按新建轨 2–5 的同等标准增量修改。
 4. **自查**：可达性检查 + 反模式清单逐项核对（见 [references/anti-patterns.md](references/anti-patterns.md)）。
 

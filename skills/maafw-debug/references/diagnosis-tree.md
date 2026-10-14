@@ -52,11 +52,10 @@
 - **timeout 归属**：想调整某节点被识别的等待时长或超时去向，改的是它上一节点的 `timeout` / `on_error`——改错对象是「调了没用」的高频原因。
 - **死循环三查**：遮蔽约束排反（被遮蔽的是出口且遮蔽者动作消不掉触发条件 = 一直命中死循环，timeout 救不了）；DirectHit 入循环（恒命中无识别门控）；`max_hit` 耗尽静默退场（识别时跳过不报错，列表空转至超时）。
 - **提前终止**：异常态里 on_error 再失败（超时或列表无有效节点）没有二次兜底、任务直接失败；`[JumpBack]` 只在正常态兑现——恢复节点拼错的 on_error 链会立即失败。
-- **改名失联面清单（后果分档）**（完整引用核对表见 maafw-pipeline 的 [naming.md](../../maafw-pipeline/references/naming.md)）：
-    - **加载期报错**：next / on_error 三种写法漏改（非锚点引用被校验拒绝——症状是资源加载失败，不是静默；interface 的 pipeline_override 注入的悬空引用同样被拦）；
-    - **运行期失败**：roi / target string 引用、`task.entry`、custom 的 `run_task` / `run_recognition` / `run_action`、template 素材路径漏改（懒加载缺图）；
-    - **调用即失败（不回滚）**：custom 的 `override_next` 悬空引用（返回值要判——`check_pipeline` 与加载期同一套校验、返回 `false`——但**不回滚**，坏补丁已生效：漏判返回值，悬空候选在识别时被跳过，**列表内再无其他存在且启用的候选**才不等 timeout 立即转 on_error，还有有效项则照常轮询命中）；
-    - **静默失联或漂移**：`[Anchor]`（校验跳过锚点名）、option 的 `pipeline_override`（override 落空）、同前缀 `Retry` / `Fallback` 克隆节点参数漂移、custom 读图未查空；另有非改名静默项——anchor 未设置/已清除被跳过、option 适用性过滤、import 同名 option 键以后导入为准。
+- **改名失联面（分档与引用面见 maafw-pipeline 的 [naming.md](../../maafw-pipeline/references/naming.md) 引用核对表）**——本层只记排障补充：
+    - 加载期那一档的**症状是资源加载失败**（不是静默），`interface.json` 的 `pipeline_override` 注入的悬空引用同样被拦；
+    - `override_next` 调用失败时 `check_pipeline` 与加载期同一套校验、返回 `false` 且不回滚——漏判返回值时悬空候选在识别时被跳过，**列表内再无其他存在且启用的候选**才不等 timeout 立即转 on_error，还有有效项则照常轮询命中；
+    - **非改名静默项也要查**：anchor 未设置 / 已清除被跳过、option 适用性过滤、import 同名 option 键以后导入为准。
 - TODO：卡死时的「最小取证序列」（当前节点、轮询列表逐项识别结果、timeout 计时）落地模板。
 
 ## 验收层细节
