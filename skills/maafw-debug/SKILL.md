@@ -7,7 +7,7 @@ description: 调试与验收 MaaFramework（MaaFW）应用（开发态、设备�
 
 > 标注 TODO 的节为**实践待补的经验样本**（增量内容，不影响可用性）；分诊状态见 skills/README.md。
 
-定位：**开发态、设备在线的实时调试与验收**（验收环节的冷启动 / 重连 / 断线恢复由开发者主动制造离线与重连窗口，属验收手段而非离开开发态）。字段精确语义（字段名、参数、默认值、版本支持）与调试命令一律路由 [MaaLLMWiki](https://github.com/Windsland52/MaaLLMWiki) 版本锁定的协议原文（2.4-控制方式说明、3.1-任务流水线协议、3.3-ProjectInterfaceV2）；**运行工具的命令与结果字段**路由所选运行工具自身文档（Agent 自主默认 maafw-live，见 [references/tooling.md](references/tooling.md)）——协议原文不含工具命令。两类来源不可达时标记"未验证"。事后日志与证据诊断（用户日志、Sentry、历史记录）归 [MaaEvidenceKit](https://github.com/Windsland52/MaaEvidenceKit) 的 `maa-evidence`，不是本 skill。
+定位：**开发态、设备在线的实时调试与验收**（验收环节的冷启动 / 重连 / 断线恢复由开发者主动制造离线与重连窗口，属验收手段而非离开开发态）。字段精确语义（字段名、参数、默认值、版本支持）与调试命令一律路由 [MaaLLMWiki](https://github.com/Windsland52/MaaLLMWiki) 版本锁定的协议原文（`2.4-控制方式说明`、`3.1-任务流水线协议`、`3.3-ProjectInterfaceV2协议`）；**运行工具的命令与结果字段**路由所选运行工具自身文档（Agent 自主默认 maafw-live，见 [references/tooling.md](references/tooling.md)）——协议原文不含工具命令。两类来源不可达时标记"未验证"。事后日志与证据诊断（用户日志、Sentry、历史记录）归 [MaaEvidenceKit](https://github.com/Windsland52/MaaEvidenceKit) 的 `maa-evidence`，不是本 skill。
 
 ## 硬护栏
 
@@ -42,7 +42,7 @@ description: 调试与验收 MaaFramework（MaaFW）应用（开发态、设备�
 
 ### 2. 识别层（单节点验证）
 
-单节点验证 + 截图 + hits/box 期望——命令查所选工具文档（默认 maafw-live：`reco` 识别单测、`--act` 真机执行动作半；`run` 从 entry 起跑会继续走 next / on_error、不是单节点验证——隔离与副作用边界见 tooling.md 默认执行路径），节点字段语义查 3.1 协议。第一问永远是**目标在不在帧里**，再谈 ROI / 阈值 / 模板；一次一个变量（硬护栏 2）。判据、经验值与识别类型适配见排障树识别层细节。
+单节点验证 + 截图 + hits/box 期望——命令查所选工具文档（默认 maafw-live：`reco` 识别单测、`--act` 真机执行动作半；`run` 从 entry 起跑会继续走 next / on_error、不是单节点验证——隔离与副作用边界见 tooling.md 默认执行路径），节点字段语义查《任务流水线协议》。第一问永远是**目标在不在帧里**，再谈 ROI / 阈值 / 模板；一次一个变量（硬护栏 2）。判据、经验值与识别类型适配见排障树识别层细节。
 
 ### 3. 动作层（识别成功 ≠ 点击生效）
 

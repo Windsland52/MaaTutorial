@@ -1,6 +1,6 @@
 # 排障树
 
-配套 [SKILL.md](../SKILL.md) 工作流第 0 步分诊后的逐层展开。判定依据：MaaLLMWiki 路由的协议原文（2.4-控制方式说明 / 3.1-任务流水线协议 / 3.3-ProjectInterfaceV2，版本锁定）；经验数值显式标注。标注 TODO 的节为实践待补项（唯一清单见 SKILL.md）。
+配套 [SKILL.md](../SKILL.md) 工作流第 0 步分诊后的逐层展开。判定依据：MaaLLMWiki 路由的协议原文（`2.4-控制方式说明` / `3.1-任务流水线协议` / `3.3-ProjectInterfaceV2协议`，版本锁定）；经验数值显式标注。标注 TODO 的节为实践待补项（唯一清单见 SKILL.md）。
 
 ## 症状 → 层 → 首选检查
 
@@ -20,17 +20,17 @@
 
 ## 配置层细节
 
-- **设备连通**：Android 先确认设备在 adb 列表、USB 调试开启；桌面窗口核对窗口句柄/标题。截图与输入方式框架自动探测选优，人工指定时逐项验证——字段语义按 2.4-控制方式说明原文核对。
+- **设备连通**：Android 先确认设备在 adb 列表、USB 调试开启；桌面窗口核对窗口句柄/标题。截图与输入方式框架自动探测选优，人工指定时逐项验证——字段语义按《控制方式说明》原文核对。
 - **任务入口**：`task.entry` 是 pipeline **节点名**（跨文件全局解析），不是文件名；合并后的 pipeline 里必须可解析。
 - **task 级过滤**：controller / resource 按 **name** 引用（不是 type）。
-- **option 适用性过滤**（`controller[]` / `resource[]` 字段 v2.3.0 引入；「不适用则不参与合并」规则 v2.3.1 明确）：option 声明的 `controller[]` / `resource[]` 适用列表不含当前选择时，整个 option（含嵌套子项）的 override 一个都不注入、无报错——「选项没生效」头号原因（经验值），先查这里，其次才是引用键 / case / override 目标（机制全文见 maafw-interface）。
+- **option 适用性过滤**（`controller[]` / `resource[]` 字段 `PI v2.3.0` 引入；「不适用则不参与合并」规则 v2.3.1 明确）：option 声明的 `controller[]` / `resource[]` 适用列表不含当前选择时，整个 option（含嵌套子项）的 override 一个都不注入、无报错——「选项没生效」头号原因（经验值），先查这里，其次才是引用键 / case / override 目标（机制全文见 maafw-interface）。
 - **agent / pretask**：子进程起没起先看它自己的 stderr / stdout（双日志纪律，见 maafw-custom 的 agent-mode.md）；`PI_*` 环境变量任何一项都可能缺省；pretask 跑完才连 Controller、非零退出即中止启动；两者 CWD 均为 interface.json 所在目录。
 - **骨架校验**：有 dev-tools 的项目先 `pnpm check` 清结构错误（schema + pipeline 静态检查）——结构错不表现为运行时错。
 
 ## 识别层细节
 
 - **先问目标在不在帧里**：取当前帧与模板来源帧比对——目标不在帧里，ROI / 阈值 / 模板的讨论没有意义。
-- **单节点验证**：识别单测（必要时真机执行动作半）+ 截图 + hits/box 期望——`run` 从节点起跑会继续走 next / on_error，隔离要限制执行范围（见 tooling.md 默认执行路径）；节点字段语义查 3.1 协议原文，运行命令与输出字段查所选工具文档；对比「期望命中」与「实际命中/得分/box」。
+- **单节点验证**：识别单测（必要时真机执行动作半）+ 截图 + hits/box 期望——`run` 从节点起跑会继续走 next / on_error，隔离要限制执行范围（见 tooling.md 默认执行路径）；节点字段语义查《任务流水线协议》原文，运行命令与输出字段查所选工具文档；对比「期望命中」与「实际命中/得分/box」。
 - **当前帧取证**：观测底座（maafw-live）crop / color / annotate 命令，或自写脚本走框架截图链路；人工在场可用官方工具链（MSE 截图 / MFA 工具箱 / MPE）——不用外部截图工具（工具矩阵见 tooling.md）。
 - **ROI**：起点识别 box 外扩约 20px（经验值）；过紧易失配、过松易误中，不稳时扫描几档。
 - **阈值**：目标位实测得分 − 约 0.1 起步（经验值，仅 TemplateMatch 套用——OCR / ColorMatch 语义不同，FeatureMatch 无 threshold、严格度由 count / ratio 控制，见 maafw-pipeline 参数起点），且仍高于该屏误配最高分；两侧贴太近是模板 / ROI 问题，调阈值救不了。

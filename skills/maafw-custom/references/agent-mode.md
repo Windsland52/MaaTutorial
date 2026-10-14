@@ -1,6 +1,6 @@
 # Agent 子进程模式与工程规范
 
-配套 [SKILL.md](../SKILL.md) 工作流第 1 步（定宿主与注册路径）。interface.json 的 `agent` 段三字段：`child_exec`（必填）、`child_args`、`identifier`，子进程 CWD = interface.json 所在目录——细节路由 3.3 原文。架构事实以 MaaLLMWiki 路由的协议原文为准。
+配套 [SKILL.md](../SKILL.md) 工作流第 1 步（定宿主与注册路径）。interface.json 的 `agent` 段三字段：`child_exec`（必填）、`child_args`、`identifier`，子进程 CWD = interface.json 所在目录——细节路由 `3.3-ProjectInterfaceV2协议`。架构事实以 MaaLLMWiki 路由的协议原文为准。
 
 ## 架构与职责分层
 

@@ -33,7 +33,7 @@ npx skills add https://github.com/Windsland52/MaaLLMWiki --skill maallmwiki --gl
 
 - **素材制作**（截模板图、OCR 词表）：硬要求是**像素空间一致 + 裁后自匹配复核**（判定标准见 `maafw-pipeline` 素材准备节）；agent 自主工作流可用实时观测底座（如 [maafw-live](https://github.com/Windsland52/maafw-live)）或自写脚本走框架截图链路，人工在场截取用官方工具链（maa-support 插件 / MFA 工具箱 / MPE 等）。用该底座时，**观测/实测/裁剪/留存的动作与判据读它自带的 skill**（随包发布，本集合不复制）：
   `npx skills add https://github.com/Windsland52/maafw-live --skill maafw-live --global`。方法见 [MaaTutorial 教程](../docs/zh_cn/start/README.md)。
-- **设备连接配置**：`maafw-debug` 排障树配置层承载；未覆盖处经 MaaLLMWiki 路由 2.4-控制方式说明原文、结合教程排查。
+- **设备连接配置**：`maafw-debug` 排障树配置层承载；未覆盖处经 MaaLLMWiki 路由 `2.4-控制方式说明` 原文、结合教程排查。
 - **项目脚手架 / 事后诊断 / 自研集成**：转向下方能力边界所列渠道；事实问题一律回落 MaaLLMWiki 与 MaaTutorial 教程。
 
 ## 能力边界
@@ -101,3 +101,5 @@ skills/
 
 - 遵循仓库 `.editorconfig`（space 缩进 4、LF、末尾换行、UTF-8）。
 - 仓库不使用 prettier：md 表格保持紧凑手写（prettier 的表格 pad 对 CJK 是假对齐），嵌入 jsonc 示例不加尾逗号、保持与 pipeline JSON 的 4 空格惯例一致。
+- **数字消歧（文档编号 vs 版本号）**：文档编号只允许出现在反引号包住的真实文件名里——首次提及写 `3.1-任务流水线协议`、`3.3-ProjectInterfaceV2协议`、`2.4-控制方式说明`（与引用 `interface.json` 同一写法）；后文一律改用不带数字的篇目名《任务流水线协议》《控制方式说明》《ProjectInterface V2》。版本号在**每个文件首次出现**时带主体（`MaaFW v5.7+`、`Pipeline v2 嵌套`、`PI v2.3.1`、`interface_version: 2`），同文件内后文可省主体；禁止裸写 `3.1 协议`、`3.3 原文`。
+- 评审自检：搜索裸 `N.N 协议` / `N.N 原文`（正则 `[0-9]\.[0-9]+ +(协议|原文)`，本条列举的反面示例除外）与书名号内含编号（`《…N.N…》`）的情形，应无命中。

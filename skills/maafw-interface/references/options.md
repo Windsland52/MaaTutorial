@@ -1,12 +1,12 @@
 # Option 接线规则
 
-来源：MaaLLMWiki 路由的 3.3-ProjectInterfaceV2 协议（版本锁定原文）。配套 [SKILL.md](../SKILL.md) 工作流第 4 步。本页只承载**选型判据与静默坑**；控件字段清单、默认值语义路由 schema，合并细则路由协议原文。
+来源：MaaLLMWiki 路由的 `3.3-ProjectInterfaceV2协议`（版本锁定原文）。配套 [SKILL.md](../SKILL.md) 工作流第 4 步。本页只承载**选型判据与静默坑**；控件字段清单、默认值语义路由 schema，合并细则路由协议原文。
 
 ## 控件选型（一个用户参数放哪种控件）
 
 - 开/关 → `switch`：case 名用 `"Yes"` / `"No"`——协议只认这几组写法（Yes/yes/Y/y、No/no/N/n）。
 - 互斥选一 → `select`（缺省类型）。
-- 可叠加的功能开关 → `checkbox`（v2.3.0+）：多个勾选 case 的 override 按 `cases` **定义顺序**依次合并——两个 case 改同一节点的同一字段时，排后面的赢，与勾选先后无关；可选数量上下限（v2.10.1+，default_case 应满足，schema 不校验）。
+- 可叠加的功能开关 → `checkbox`（`PI v2.3.0+`）：多个勾选 case 的 override 按 `cases` **定义顺序**依次合并——两个 case 改同一节点的同一字段时，排后面的赢，与勾选先后无关；可选数量上下限（v2.10.1+，default_case 应满足，schema 不校验）。
 - 用户填值 → `input`：override 字符串里 `{字段名}` 占位，按 `pipeline_type` 转型；`verify` 正则验证。
 - 绑按键 → `hotkey`（v2.8.0+）：占位符替换出的是**单个整数键码**，不会展开成 key 数组——要组合键一次性按下，回 pipeline 拆节点或写死键码数组。
 - 嵌套 `option`（case 内 `option[]`）：仅选中该 case 时激活；协议支持无限嵌套，深度按实际需求定（子项同样受适用性过滤连带，见下节）。

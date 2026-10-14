@@ -5,7 +5,7 @@ description: 编写、修改与审查 MaaFramework interface.json（Project Inte
 
 # MaaFW interface.json（PI V2）开发
 
-interface.json 是项目对外的标准化声明：通用 GUI、打包分发、工具链都靠它认识项目。字段语义一律路由 [MaaLLMWiki](https://github.com/Windsland52/MaaLLMWiki) 的 3.3-ProjectInterfaceV2 协议与官方 schema（interface.schema.json），不凭记忆填（已安装 `maallmwiki` skill 时由其承载完整路由流程）。
+interface.json 是项目对外的标准化声明：通用 GUI、打包分发、工具链都靠它认识项目。字段语义一律路由 [MaaLLMWiki](https://github.com/Windsland52/MaaLLMWiki) 的 `3.3-ProjectInterfaceV2协议` 与官方 schema（interface.schema.json），不凭记忆填（已安装 `maallmwiki` skill 时由其承载完整路由流程）。
 
 本文只承载路由拿不到的三样：**选型决策**（什么时候用什么）、**静默失败面**（不报错但就是不生效的字段交互）、**流程与验证手法**。字段字典（枚举、默认值、字段清单）不在本文复制；文中版本标注均为"该机制自哪版起"的历史事实，不是当前版本快照。
 
@@ -14,7 +14,7 @@ interface.json 是项目对外的标准化声明：通用 GUI、打包分发、�
 ## 硬护栏
 
 1. **对外契约**：字段改动 = 用户可见行为改动；软件更新走 `github` 字段的 release 约定（通用 UI 只更新资源 release），不自造更新通道。
-2. **resource / Bundle 分层**（定义出自官方术语表 1.2-术语解释；3.3-ProjectInterfaceV2 协议行文的"资源包"指 resource 条目，不是 Bundle）：
+2. **resource / Bundle 分层**（定义出自官方术语表《术语解释》；《ProjectInterface V2》行文的"资源包"指 resource 条目，不是 Bundle）：
     - **Bundle**：按 pipeline / model / image 标准结构存储的文件夹；`path[]` 的每个条目指向一个 Bundle 根目录（不是 `pipeline/` 子目录），按序加载、后者覆盖前者。
     - **resource 条目**：声明单位（name / label / option），用户在 Client 里选择的就是它。
     - controller / resource 声明**不能**经 import 合并——资源根永远由主 interface 声明。
@@ -75,4 +75,4 @@ interface.json 是项目对外的标准化声明：通用 GUI、打包分发、�
 
 - [references/options.md](references/options.md) — 控件选型判据、声明层级与覆盖顺序、过滤（v2.3.1）、preset 与 import 的静默坑
 
-字段级细节、`PI_*` 变量表与版本变更一律路由 3.3-ProjectInterfaceV2 协议与官方 schema。
+字段级细节、`PI_*` 变量表与版本变更一律路由《ProjectInterface V2》与官方 schema。
