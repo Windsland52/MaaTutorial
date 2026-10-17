@@ -1,6 +1,6 @@
 ---
 name: maafw-debug
-description: 调试与验收 MaaFramework（MaaFW）应用（开发态、设备在线）——节点识别失败、点击不落点（识别成功 ≠ 点击生效）、ROI 校准与阈值调参、单节点运行验证、流程卡死与 controller 连接排查、端到端验收与 pipeline_override 生效验证；按配置/识别/动作/流程/验收五层分诊，产出定位结论与证据，修复交接回 maafw-pipeline / maafw-interface / maafw-custom。Use when debugging or acceptance-testing a MaaFW application with a device attached — node recognition failures, clicks that miss, ROI calibration and threshold tuning, single-node run verification, stuck flows and controller connection issues, end-to-end acceptance, or pipeline_override effect checks; triage by layer (config / recognition / action / flow / acceptance), then hand the fix back to maafw-pipeline / maafw-interface / maafw-custom.
+description: 调试与验收 MaaFramework（MaaFW）应用（开发态、设备在线）——节点识别失败、点击不落点（识别成功 ≠ 点击生效）、ROI 校准与阈值调参、单节点运行验证、流程卡死与 controller 连接排查、端到端验收与 pipeline_override 生效验证；pipeline / custom / interface 改完、在声明完成、交付或提 PR 之前的真机跑通验收同样归本 skill（此时未必在排障）；按配置/识别/动作/流程/验收五层分诊，产出定位结论与证据，修复交接回 maafw-pipeline / maafw-interface / maafw-custom。Use when debugging or acceptance-testing a MaaFW application with a device attached — node recognition failures, clicks that miss, ROI calibration and threshold tuning, single-node run verification, stuck flows and controller connection issues, end-to-end acceptance, pipeline_override effect checks, or the end-to-end acceptance run required before declaring a newly written or edited pipeline done; triage by layer (config / recognition / action / flow / acceptance), then hand the fix back to maafw-pipeline / maafw-interface / maafw-custom.
 ---
 
 # MaaFW 调试与验收
@@ -71,7 +71,7 @@ description: 调试与验收 MaaFramework（MaaFW）应用（开发态、设备�
 
 ## TODO（实践待补——经验样本类增量，唯一清单）
 
-- 排障树各分支的日志判读细则（日志片段 → 结论的判读样本）
+- 排障树其余分支的日志判读细则（节点执行链的判读样本已在 [references/tooling.md](references/tooling.md) 流程层取证；其余分支的「日志片段 → 结论」样本仍待补）
 - 识别慢（性能）排查分支；ColorMatch / And / Or / 自训模型节点的调试要点
 - 各层最小复现标准流程与取证快照清单（含流程层「最小取证序列」模板）
 - 验收记录模板（验证对象、范围、实际结果、证据、实现指纹——对齐 state-plan 的 tested 语义，待其 schema 冻结）
