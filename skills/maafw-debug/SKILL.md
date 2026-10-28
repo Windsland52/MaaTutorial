@@ -1,11 +1,11 @@
 ---
 name: maafw-debug
-description: 调试与验收 MaaFramework（MaaFW）应用（开发态、设备在线）——节点识别失败、点击不落点（识别成功 ≠ 点击生效）、ROI 校准与阈值调参、单节点运行验证、流程卡死与 controller 连接排查、端到端验收与 pipeline_override 生效验证；pipeline / custom / interface 改完、在声明完成、交付或提 PR 之前的真机跑通验收同样归本 skill（此时未必在排障）；按配置/识别/动作/流程/验收五层分诊，产出定位结论与证据，修复交接回 maafw-pipeline / maafw-interface / maafw-custom。Use when debugging or acceptance-testing a MaaFW application with a device attached — node recognition failures, clicks that miss, ROI calibration and threshold tuning, single-node run verification, stuck flows and controller connection issues, end-to-end acceptance, pipeline_override effect checks, or the end-to-end acceptance run required before declaring a newly written or edited pipeline done; triage by layer (config / recognition / action / flow / acceptance), then hand the fix back to maafw-pipeline / maafw-interface / maafw-custom.
+description: 调试与验收 MaaFramework（MaaFW）应用（开发态、设备在线）：节点识别失败、点击不落点（识别成功 ≠ 点击生效）、ROI 校准与调参、单节点验证、流程卡死、controller 连接、pipeline_override 生效验证、端到端验收（含 pipeline / custom / interface 改完、声明完成 / 交付 / 开 PR 前的真机跑通）。按配置 / 识别 / 动作 / 流程 / 验收五层分诊，产出定位结论与证据，修复交接 maafw-pipeline / maafw-interface / maafw-custom。Use when debugging or acceptance-testing a MaaFW app with a device attached — recognition failures, clicks that miss, ROI tuning, stuck flows, controller faults, pipeline_override checks, pre-delivery acceptance.
 ---
 
 # MaaFW 调试与验收
 
-> 标注 TODO 的节为**实践待补的经验样本**（增量内容，不影响可用性）；分诊状态见 [../README.md](../README.md)。
+> 标注 TODO 的节为**实践待补的经验样本**（增量内容，不影响可用性）；分诊状态见 [skills/README.md](../README.md) 的「意图 → Skill 分诊」。
 
 定位：**开发态、设备在线的实时调试与验收**（验收环节的冷启动 / 重连 / 断线恢复由开发者主动制造离线与重连窗口，属验收手段而非离开开发态）：
 
@@ -46,7 +46,7 @@ description: 调试与验收 MaaFramework（MaaFW）应用（开发态、设备�
 
 ### 2. 识别层（单节点验证）
 
-单节点验证 + 截图 + hits/box 期望——命令查所选工具文档（默认 maafw-live：`reco` 识别单测、`--act` 真机执行动作半；`run` 从 entry 起跑会继续走 next / on_error、不是单节点验证——隔离与副作用边界见 [references/tooling.md](references/tooling.md) 默认执行路径），节点字段语义查《任务流水线协议》。第一问永远是**目标在不在帧里**，再谈 ROI / 阈值 / 模板；一次一个变量（硬护栏 2）。判据、经验值与识别类型适配见 [references/diagnosis-tree.md](references/diagnosis-tree.md) 识别层细节。
+单节点验证 + 截图 + hits/box 期望——命令查所选工具文档（默认 maafw-live：`reco` 识别单测、`--act` 真机执行动作半；`run` 从 entry 起跑会继续走 next / on_error、不是单节点验证——隔离与副作用边界见 [references/tooling.md](references/tooling.md) 默认执行路径），节点字段语义查《任务流水线协议》。第一问永远是**目标在不在帧里**，再谈 ROI / 阈值 / 模板；一次一个变量（硬护栏 2）。**先分清「目标不在帧 / roi 不对」和「整块被当一行识别」**：后者常见于 `only_rec` 用在了框不精确的 roi 上，症状是识别文本混入相邻元素、返回 box 恒等于 roi、点击落点偏移——**但要先确认节点确实开了 `only_rec`；没开时 `box = roi` 多半是 det 未出框回退（整块 roi 被直接送 rec），按「roi 留边」查**。确认开了 only_rec 时该按情境决定「精确框住文字后保留 only_rec」还是「去掉 only_rec 让检测出框」，不是调阈值（细则见 [../maafw-pipeline/references/anti-patterns.md](../maafw-pipeline/references/anti-patterns.md) 的「坐标卫生细则」与「反模式清单」）。判据、经验值与识别类型适配见 [references/diagnosis-tree.md](references/diagnosis-tree.md) 识别层细节。
 
 ### 3. 动作层（识别成功 ≠ 点击生效）
 
@@ -56,9 +56,11 @@ description: 调试与验收 MaaFramework（MaaFW）应用（开发态、设备�
 
 用执行模型归因（执行模型全文见 maafw-pipeline 的 [SKILL.md](../maafw-pipeline/SKILL.md)，这是归因的唯一地图）。最常见归因错误：想调某节点被识别的等待时长，改的是它**上一节点**的 `timeout` / `on_error`。死循环三查、提前终止与改名失联面清单见 [references/diagnosis-tree.md](references/diagnosis-tree.md) 流程层细节。
 
-### 5. 验收层（端到端）
+### 5. 验收层（端到端；声明完成 / 交付 / 开 PR 前的最终验收）
 
 完备性四问（尤其「不在目标场景时的行为已显式定义」）+ 判定分级（硬护栏 5）+ 重复跑（含冷启动 / 重连 / 断线恢复）；验收分两档——Pipeline 业务流程验收（运行工具可承担，结论须记录前置条件与 Agent 状态）与目标 Client 集成验收（实际经 Client 的 pretask、装配、Agent 启动与任务入口，工具跑通不能替代——边界见 [references/tooling.md](references/tooling.md)）。override 生效验证与测试沉淀见 [references/diagnosis-tree.md](references/diagnosis-tree.md) 验收层细节。
+
+**通过判据**：任务级成功 + 业务行为符合预期；跑满预算被截断（`status=0` + `stopped=true`，含超时被停）与离线识别分数（只用于调参/回归）都不算通过；任务级失败必须落到具体节点名（Client 集成验收的失败不一定落到节点，需单独记录）。`status` / `stopped` / `record.ok` 属**工具侧字段**，字段面与退出码一律按其仓库文档核对，判定要点见 [references/tooling.md](references/tooling.md)。
 
 ### 6. 交接
 
